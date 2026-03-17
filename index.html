@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Continue in Your Browser</title>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  :root {
+    --bg-start: #0a0a0a;
+    --bg-end: #1a1a2e;
+    --card-bg: rgba(255, 255, 255, 0.06);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --text-primary: #f0f0f0;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --text-muted: rgba(255, 255, 255, 0.35);
+    --accent: #6366f1;
+    --accent-glow: rgba(99, 102, 241, 0.4);
+    --success: #22c55e;
+    --success-glow: rgba(34, 197, 94, 0.3);
+    --warning: #f59e0b;
+    --danger: #ef4444;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(145deg, var(--bg-start) 0%, var(--bg-end) 100%);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Background ambient glow */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 40%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
+    animation: ambientShift 20s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes ambientShift {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(-2%, -2%) rotate(3deg); }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 40px 28px 32px;
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    text-align: center;
+    animation: cardEnter 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes cardEnter {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* Shield icon */
+  .shield-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 24px;
+    background: linear-gradient(135deg, var(--accent), #8b5cf6);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px var(--accent-glow);
+    animation: iconPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes iconPulse {
+    0%, 100% { box-shadow: 0 4px 20px var(--accent-glow); }
+    50% { box-shadow: 0 4px 30px rgba(99, 102, 241, 0.6); }
+  }
+
+  .shield-icon svg {
+    width: 28px;
+    height: 28px;
+    fill: white;
+  }
+
+  .card h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .card .subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 28px;
+  }
+
+  /* CTA button */
+  .cta-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px 24px;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .cta-button.primary {
+    background: linear-gradient(135deg, var(--accent), #8b5cf6);
+    color: white;
+    box-shadow: 0 4px 16px var(--accent-glow);
+  }
+
+  .cta-button.primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px var(--accent-glow);
+  }
+
+  .cta-button.primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px var(--accent-glow);
+  }
+
+  .cta-button.secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    margin-top: 10px;
+  }
+
+  .cta-button.secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .cta-button svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  /* Loading spinner on button */
+  .cta-button .spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  .cta-button.loading .spinner {
+    display: block;
+  }
+
+  .cta-button.loading .btn-icon {
+    display: none;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Status messages */
+  .status-area {
+    margin-top: 20px;
+    min-height: 24px;
+  }
+
+  .status-msg {
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 12px 16px;
+    border-radius: 12px;
+    animation: fadeSlideIn 0.3s ease both;
+    display: none;
+  }
+
+  .status-msg.visible {
+    display: block;
+  }
+
+  .status-msg.info {
+    background: rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+  }
+
+  .status-msg.success {
+    background: rgba(34, 197, 94, 0.15);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+  }
+
+  .status-msg.warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fcd34d;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+  }
+
+  .status-msg.error {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Instruction panel */
+  .instruction-panel {
+    display: none;
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    text-align: left;
+    animation: fadeSlideIn 0.4s ease both;
+  }
+
+  .instruction-panel.visible {
+    display: block;
+  }
+
+  .instruction-panel h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+
+  .instruction-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 8px 0;
+  }
+
+  .instruction-step + .instruction-step {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .step-number {
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text-primary);
+  }
+
+  /* Clipboard flash animation */
+  @keyframes clipboardFlash {
+    0% { box-shadow: 0 0 0 0 var(--success-glow); }
+    30% { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+  }
+
+  .clipboard-flash {
+    animation: clipboardFlash 0.6s ease-out;
+  }
+
+  /* Checkmark animation */
+  @keyframes checkPop {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .check-anim {
+    animation: checkPop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Already-in-browser state */
+  .state-in-browser .shield-icon {
+    background: linear-gradient(135deg, var(--success), #16a34a);
+    box-shadow: 0 4px 20px var(--success-glow);
+  }
+
+  @keyframes iconPulseGreen {
+    0%, 100% { box-shadow: 0 4px 20px var(--success-glow); }
+    50% { box-shadow: 0 4px 30px rgba(34, 197, 94, 0.5); }
+  }
+
+  .state-in-browser .shield-icon {
+    animation: iconPulseGreen 3s ease-in-out infinite;
+  }
+
+  /* Trust badges */
+  .trust-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .trust-item svg {
+    width: 14px;
+    height: 14px;
+    opacity: 0.5;
+  }
+
+  /* Debug panel */
+  .debug-toggle {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: opacity 0.2s;
+  }
+
+  .debug-toggle:hover {
+    opacity: 0.8;
+  }
+
+  .debug-panel {
+    display: none;
+    position: fixed;
+    bottom: 48px;
+    left: 12px;
+    right: 12px;
+    z-index: 100;
+    background: rgba(10, 10, 15, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 16px;
+    max-height: 40vh;
+    overflow-y: auto;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    animation: fadeSlideIn 0.3s ease both;
+  }
+
+  .debug-panel.visible {
+    display: block;
+  }
+
+  .debug-panel .debug-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .debug-panel .debug-key {
+    color: var(--text-muted);
+  }
+
+  .debug-panel .debug-val {
+    color: var(--accent);
+    text-align: right;
+    max-width: 60%;
+    word-break: break-all;
+  }
+
+  .debug-panel .debug-val.true { color: var(--success); }
+  .debug-panel .debug-val.false { color: var(--danger); }
+
+  /* Responsive */
+  @media (max-height: 600px) {
+    .card { padding: 28px 24px 24px; }
+    .shield-icon { width: 44px; height: 44px; margin-bottom: 16px; border-radius: 12px; }
+    .shield-icon svg { width: 22px; height: 22px; }
+    .card h1 { font-size: 20px; }
+    .card .subtitle { margin-bottom: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+  <div class="card" id="card">
+
+    <!-- Shield icon -->
+    <div class="shield-icon">
+      <svg id="icon-shield" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 16l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/>
+      </svg>
+      <svg id="icon-check" style="display:none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+      </svg>
+    </div>
+
+    <!-- Titles -->
+    <h1 id="title">Continue securely in your browser</h1>
+    <p class="subtitle" id="subtitle">Your browser provides better security, performance, and a full browsing experience.</p>
+
+    <!-- Primary CTA -->
+    <button class="cta-button primary" id="cta-primary" onclick="handlePrimaryClick()">
+      <span class="spinner"></span>
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+      </svg>
+      <span class="btn-label" id="cta-label">Open in Browser</span>
+    </button>
+
+    <!-- Secondary CTA (copy fallback) -->
+    <button class="cta-button secondary" id="cta-secondary" style="display:none" onclick="handleSecondaryClick()">
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 1H4a2 2 0 00-2 2v14h2V3h12V1zm3 4H8a2 2 0 00-2 2v14a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2zm0 16H8V7h11v14z"/>
+      </svg>
+      <span class="btn-label" id="cta-secondary-label">Copy Link Instead</span>
+    </button>
+
+    <!-- Status messages -->
+    <div class="status-area">
+      <div class="status-msg" id="status-msg"></div>
+    </div>
+
+    <!-- Manual instruction panel -->
+    <div class="instruction-panel" id="instruction-panel">
+      <h3>Manual Method</h3>
+      <div id="instruction-steps"></div>
+    </div>
+
+    <!-- Trust badges -->
+    <div class="trust-row">
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>
+        Secure
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        Private
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0013 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+        Fast
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Debug toggle -->
+<button class="debug-toggle" id="debug-toggle" onclick="toggleDebug()">Debug</button>
+<div class="debug-panel" id="debug-panel"></div>
+
+<!-- Load modules -->
+<script src="./js/config.js"></script>
+<script src="./js/detect.js"></script>
+<script src="./js/strategies.js"></script>
+<script src="./js/logger.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  // --- Initialization ---
+  var config = IABConfig.create({
+    ui: { brandName: 'Ahoum', showDebug: false }
+  });
+  var det = IABDetect.detect();
+  var logger = IABLogger.create(config.logging);
+  var targetUrl = config.targetUrl || window.location.href;
+  var attemptCount = 0;
+  var currentStrategyIndex = 0;
+  var availableStrategies = IABStrategies.getStrategies(det, config);
+
+  // Log page load
+  logger.log('page_load', {
+    iabType: det.iabType,
+    platform: det.platform,
+    isInAppBrowser: det.isInAppBrowser,
+    strategiesAvailable: availableStrategies.length
+  });
+
+  // --- DOM refs ---
+  var elCard = document.getElementById('card');
+  var elTitle = document.getElementById('title');
+  var elSubtitle = document.getElementById('subtitle');
+  var elCtaPrimary = document.getElementById('cta-primary');
+  var elCtaLabel = document.getElementById('cta-label');
+  var elCtaSecondary = document.getElementById('cta-secondary');
+  var elCtaSecondaryLabel = document.getElementById('cta-secondary-label');
+  var elStatusMsg = document.getElementById('status-msg');
+  var elInstructionPanel = document.getElementById('instruction-panel');
+  var elInstructionSteps = document.getElementById('instruction-steps');
+  var elIconShield = document.getElementById('icon-shield');
+  var elIconCheck = document.getElementById('icon-check');
+
+  // --- State Machine ---
+
+  function init() {
+    if (!det.isInAppBrowser) {
+      showAlreadyInBrowser();
+      return;
+    }
+
+    // Customize CTA label based on platform
+    if (det.isIOS) {
+      elCtaLabel.textContent = 'Open in Safari';
+    } else if (det.isAndroid) {
+      if (det.isSamsungBrowser) {
+        elCtaLabel.textContent = 'Open in Browser';
+      } else {
+        elCtaLabel.textContent = 'Open in Chrome';
+      }
+    }
+
+    // Show secondary button for clipboard
+    if (det.hasClipboardApi || det.hasShareApi) {
+      elCtaSecondary.style.display = 'flex';
+      if (det.hasShareApi) {
+        elCtaSecondaryLabel.textContent = 'Share Link';
+      } else {
+        elCtaSecondaryLabel.textContent = 'Copy Link';
+      }
+    }
+
+    logger.log('interstitial_shown', {
+      strategy: availableStrategies.length > 0 ? availableStrategies[0].key : 'none'
+    });
+  }
+
+  function showAlreadyInBrowser() {
+    elCard.classList.add('state-in-browser');
+    elIconShield.style.display = 'none';
+    elIconCheck.style.display = 'block';
+    elIconCheck.classList.add('check-anim');
+    elTitle.textContent = "You're all set!";
+    elSubtitle.textContent = "You're already browsing in a full browser with complete security and performance.";
+    elCtaPrimary.style.display = 'none';
+    elCtaSecondary.style.display = 'none';
+    logger.log('already_in_browser');
+  }
+
+  // --- Button Handlers ---
+
+  window.handlePrimaryClick = function() {
+    if (availableStrategies.length === 0) {
+      showStatus('No escape strategies available for this environment.', 'warning');
+      showManualInstructions();
+      return;
+    }
+
+    var entry = availableStrategies[currentStrategyIndex];
+    if (!entry) {
+      showManualInstructions();
+      return;
+    }
+
+    attemptCount++;
+    logger.log('strategy_attempt', {
+      strategy: entry.key,
+      attempt: attemptCount,
+      name: entry.strategy.name
+    });
+
+    // Show loading state
+    elCtaPrimary.classList.add('loading');
+    showStatus('Opening in your browser...', 'info');
+
+    var result;
+    try {
+      result = entry.strategy.execute(targetUrl, det);
+    } catch(e) {
+      result = { success: false, error: e.message };
+    }
+
+    // Handle promise-based results
+    if (result && typeof result.then === 'function') {
+      result.then(function(res) {
+        handleStrategyResult(res, entry);
+      }).catch(function(err) {
+        handleStrategyResult({ success: false, error: err.message }, entry);
+      });
+    } else {
+      handleStrategyResult(result, entry);
+    }
+  };
+
+  window.handleSecondaryClick = function() {
+    // Try share first, fall back to clipboard
+    if (det.hasShareApi) {
+      logger.log('share_attempt');
+      navigator.share({ title: document.title, url: targetUrl }).then(function() {
+        showStatus('Shared successfully!', 'success');
+        logger.log('share_success');
+      }).catch(function(e) {
+        if (e.name !== 'AbortError') {
+          copyToClipboard();
+        }
+        logger.log('share_cancel');
+      });
+    } else {
+      copyToClipboard();
+    }
+  };
+
+  function copyToClipboard() {
+    logger.log('clipboard_attempt');
+
+    var doCopy = function() {
+      // Legacy fallback
+      var ta = document.createElement('textarea');
+      ta.value = targetUrl;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        onCopySuccess();
+      } catch(e) {
+        showStatus('Could not copy. Long-press the URL below:', 'warning');
+        showUrlDisplay();
+      }
+      document.body.removeChild(ta);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(targetUrl).then(function() {
+        onCopySuccess();
+      }).catch(function() {
+        doCopy();
+      });
+    } else {
+      doCopy();
+    }
+  }
+
+  function onCopySuccess() {
+    // Flash animation
+    elCtaSecondary.classList.add('clipboard-flash');
+    setTimeout(function() { elCtaSecondary.classList.remove('clipboard-flash'); }, 600);
+
+    elCtaSecondaryLabel.textContent = 'Copied!';
+    setTimeout(function() {
+      elCtaSecondaryLabel.textContent = det.hasShareApi ? 'Share Link' : 'Copy Link';
+    }, 2000);
+
+    var browserName = det.isIOS ? 'Safari' : 'Chrome';
+    showStatus('Link copied! Open ' + browserName + ' and paste in the address bar.', 'success');
+    logger.log('clipboard_success');
+  }
+
+  function showUrlDisplay() {
+    var el = document.createElement('div');
+    el.style.cssText = 'margin-top:12px;padding:10px;background:rgba(255,255,255,0.08);border-radius:8px;font-family:monospace;font-size:12px;word-break:break-all;color:var(--text-secondary);user-select:all;-webkit-user-select:all;';
+    el.textContent = targetUrl;
+    elStatusMsg.parentNode.appendChild(el);
+  }
+
+  // --- Strategy result handling ---
+
+  function handleStrategyResult(result, entry) {
+    elCtaPrimary.classList.remove('loading');
+
+    logger.log('strategy_result', {
+      strategy: entry.key,
+      result: result
+    });
+
+    if (!result) {
+      onStrategyFail(entry);
+      return;
+    }
+
+    if (result.success === 'pending') {
+      // Strategy fired - wait to see if we're still here
+      showStatus('Opening...', 'info');
+      setTimeout(function() {
+        // If we're still here, it probably didn't work
+        onStrategyPending(entry);
+      }, config.ui.fallbackDelay);
+
+    } else if (result.success === 'manual') {
+      // Show instruction
+      showStatus(result.instruction || 'Follow the instructions below.', 'info');
+      if (result.showGuide) {
+        showManualInstructions();
+      }
+
+    } else if (result.success === false) {
+      onStrategyFail(entry, result.error);
+    }
+  }
+
+  function onStrategyPending(entry) {
+    // We're still in the IAB - the strategy may have failed silently
+    logger.log('strategy_still_here', { strategy: entry.key });
+
+    if (config.ui.progressiveEscalation && currentStrategyIndex < availableStrategies.length - 1) {
+      currentStrategyIndex++;
+      var next = availableStrategies[currentStrategyIndex];
+      showStatus('Trying another method...', 'warning');
+
+      if (next.strategy.requiresUserGesture) {
+        elCtaLabel.textContent = 'Try: ' + next.strategy.name;
+      } else {
+        // Auto-attempt non-gesture strategies
+        setTimeout(function() {
+          window.handlePrimaryClick();
+        }, 500);
+      }
+    } else {
+      showStatus("Automatic redirect didn't work. Try the manual method below.", 'warning');
+      showManualInstructions();
+    }
+  }
+
+  function onStrategyFail(entry, error) {
+    logger.log('strategy_fail', { strategy: entry.key, error: error });
+
+    if (config.ui.progressiveEscalation && currentStrategyIndex < availableStrategies.length - 1) {
+      currentStrategyIndex++;
+      showStatus('Trying another method...', 'warning');
+      setTimeout(function() {
+        window.handlePrimaryClick();
+      }, 300);
+    } else {
+      showStatus(error || 'Could not open external browser automatically.', 'error');
+      showManualInstructions();
+    }
+  }
+
+  // --- UI Helpers ---
+
+  function showStatus(msg, type) {
+    elStatusMsg.textContent = msg;
+    elStatusMsg.className = 'status-msg visible ' + (type || 'info');
+  }
+
+  function showManualInstructions() {
+    var steps;
+    if (det.isIOS) {
+      steps = [
+        'Tap the <strong>\u2022\u2022\u2022</strong> (three dots) menu at the bottom right of the screen',
+        'Select <strong>"Open in Safari"</strong> from the menu',
+        'The page will reopen in Safari with full browser features'
+      ];
+    } else if (det.isAndroid) {
+      steps = [
+        'Tap the <strong>\u22ee</strong> (three dots) menu at the top right corner',
+        'Select <strong>"Open in Chrome"</strong> or <strong>"Open in browser"</strong>',
+        'The page will reopen in your default browser'
+      ];
+    } else {
+      steps = [
+        'Copy the URL from the address bar',
+        'Open your preferred browser',
+        'Paste the URL in the address bar and press Enter'
+      ];
+    }
+
+    var html = '';
+    for (var i = 0; i < steps.length; i++) {
+      html += '<div class="instruction-step">'
+        + '<div class="step-number">' + (i + 1) + '</div>'
+        + '<div class="step-text">' + steps[i] + '</div>'
+        + '</div>';
+    }
+    elInstructionSteps.innerHTML = html;
+    elInstructionPanel.classList.add('visible');
+
+    logger.log('manual_instructions_shown', { platform: det.platform });
+  }
+
+  // --- Debug Panel ---
+
+  window.toggleDebug = function() {
+    var panel = document.getElementById('debug-panel');
+    panel.classList.toggle('visible');
+
+    if (panel.classList.contains('visible')) {
+      renderDebug();
+    }
+  };
+
+  function renderDebug() {
+    var panel = document.getElementById('debug-panel');
+    var props = [
+      ['Platform', det.platform],
+      ['IAB Type', det.iabType],
+      ['In-App Browser', det.isInAppBrowser],
+      ['Instagram UA', det.isInstagramUA],
+      ['IG Bridge', det.hasInstagramBridge],
+      ['Android', det.isAndroid],
+      ['iOS', det.isIOS],
+      ['iOS Version', det.iosVersion],
+      ['Android Version', det.androidVersion],
+      ['WebView (Android)', det.isAndroidWebView],
+      ['CCT', det.isChromeCustomTab],
+      ['WebView (iOS)', det.isIOSWebView],
+      ['Chrome', det.isChrome],
+      ['Safari', det.isSafari],
+      ['Samsung', det.isSamsungBrowser],
+      ['Share API', det.hasShareApi],
+      ['Clipboard API', det.hasClipboardApi],
+      ['Beacon API', det.hasBeaconApi],
+      ['Standalone', det.isStandalone],
+      ['Strategies', availableStrategies.length],
+      ['Attempts', attemptCount],
+      ['Session', logger.getSessionId()]
+    ];
+
+    var html = '';
+    for (var i = 0; i < props.length; i++) {
+      var val = props[i][1];
+      var valClass = '';
+      if (val === true) valClass = 'true';
+      else if (val === false) valClass = 'false';
+      html += '<div class="debug-row"><span class="debug-key">' + props[i][0]
+        + '</span><span class="debug-val ' + valClass + '">' + val + '</span></div>';
+    }
+
+    // Strategy list
+    html += '<div style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.1);padding-top:8px;color:var(--text-muted)">Available Strategies:</div>';
+    for (var j = 0; j < availableStrategies.length; j++) {
+      var s = availableStrategies[j];
+      var marker = j === currentStrategyIndex ? '>' : ' ';
+      html += '<div class="debug-row"><span class="debug-key">' + marker + ' ' + s.key
+        + '</span><span class="debug-val">' + s.strategy.reliability + '</span></div>';
+    }
+
+    // UA (truncated)
+    html += '<div style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.1);padding-top:8px;word-break:break-all;color:var(--text-muted);font-size:10px;">UA: '
+      + det.userAgent + '</div>';
+
+    panel.innerHTML = html;
+  }
+
+  // --- Boot ---
+  init();
+
+})();
+</script>
+</body>
+</html>
